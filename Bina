@@ -1,0 +1,33 @@
+import os, requests, random, re
+from datetime import datetime
+import xml.etree.ElementTree as ET
+
+BINANCE_KEY = os.environ.get("dac768cbf90f4468a6816a6e095c313e")
+GEMINI_KEY = os.environ.get("AIzaSyA1HgE-qZDt0HxOFdHXlq1Cc87NVYV1YbA")
+
+BIN_URL = "https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add"
+HEADERS = {"X-Square-OpenAPI-Key": BINANCE_KEY, "Content-Type":"application/json", "clienttype":"binanceSkill"}
+
+def clean(t): return re.sub(r'<[^>]+>', '', t or '')
+
+def get_news():
+    try:
+        r = requests.get("https://cointelegraph.com/rss", timeout=10)
+        root = ET.fromstring(r.content)
+        item = random.choice(root.findall(".//item")[:10])
+        return clean(item.find("title").text)
+    except: return "Bitcoin volatility rising"
+
+def gemini_post(title):
+    prompt = f"Write viral Binance Square post, 180 chars max, Nigerian trader style about: {title}. Add $BTC prediction, end with question."
+    url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={GEMINI_KEY}"
+    try:
+        r = requests.post(url, json={"contents":[{"parts":[{"text":prompt}]}]}, timeout=20)
+        txt = r.json()["candidates"][0]["content"]["parts"][0]["text"]
+        return txt[:250] + "\n\nNFA"
+    except: return f"🚨 {title}\n$BTC next move? $BTC $ETH"
+
+news = get_news()
+content = gemini_post(news)
+r = requests.post(BIN_URL, headers=HEADERS, json={"bodyTextOnly": content})
+print("POSTED:", content)

@@ -2,8 +2,8 @@ import os, requests, random, re
 from datetime import datetime
 import xml.etree.ElementTree as ET
 
-BINANCE_KEY = os.environ.get("dac768cbf90f4468a6816a6e095c313e")
-GEMINI_KEY = os.environ.get("AIzaSyA1HgE-qZDt0HxOFdHXlq1Cc87NVYV1YbA")
+BINANCE_KEY = os.environ.get("BINANCE_KEY")
+GEMINI_KEY = os.environ.get("GEMINI_KEY")
 
 BIN_URL = "https://www.binance.com/bapi/composite/v1/public/pgc/openApi/content/add"
 HEADERS = {"X-Square-OpenAPI-Key": BINANCE_KEY, "Content-Type":"application/json", "clienttype":"binanceSkill"}

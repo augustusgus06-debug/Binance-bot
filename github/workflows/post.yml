@@ -1,0 +1,17 @@
+name: Binance Poster
+on:
+  schedule:
+    - cron: '0 7,12,18,19,20,21 * * *'
+  workflow_dispatch:
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: pip install requests
+      - run: python main.py
+        env:
+          BINANCE_KEY: ${{ secrets.BINANCE_KEY }}
+          GEMINI_KEY: ${{ secrets.GEMINI_KEY }}
